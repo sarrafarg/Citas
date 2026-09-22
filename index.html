@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#5b4bc4">
+<title>Mis personas</title>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#fff; --ink:#1f2330; --mute:#6b7080; --line:#e6e4de;
+  --acc:#5b4bc4; --acc-ink:#fff; --acc-soft:#ece9fb;
+  --danger:#b42318; --danger-bg:#fdecea; --danger-line:#f3b9b3;
+  --ok:#1a7f4b; --ok-bg:#e3f4ea; --warn:#8a5a00; --warn-bg:#fff2cf;
+  --ph-m:#e5484d; --ph-f:#3fa66b; --ph-o:#e0a100; --ph-l:#7b6ce0;
+  --r:14px; --shadow:0 1px 2px rgba(20,20,40,.06),0 4px 14px rgba(20,20,40,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#131419; --card:#1d1f27; --ink:#eceef4; --mute:#9aa0b2; --line:#2c2f3a;
+    --acc:#9186f2; --acc-ink:#12121a; --acc-soft:#2b2950;
+    --danger:#ff8f86; --danger-bg:#3a1e1e; --danger-line:#6b2f2f;
+    --ok:#5fd394; --ok-bg:#14301f; --warn:#f1c25a; --warn-bg:#382c0d;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:96px}
+#app{max-width:760px;margin:0 auto;padding:0 16px}
+h1{font-size:1.5rem;margin:0}
+h2{font-size:.78rem;margin:0;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700}
+p{margin:.4em 0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:18px 0 10px}
+.top .ttl{flex:1;min-width:0}
+.top .ttl small{display:block;color:var(--mute);font-size:.85rem}
+.icon{background:none;border:0;font-size:1.25rem;padding:8px;border-radius:10px;line-height:1}
+.icon:hover{background:var(--acc-soft)}
+.link{background:none;border:0;color:var(--acc);font-weight:600;padding:4px 2px;font-size:.9rem}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 16px;font-weight:600}
+.btn.primary{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.btn.ghost{background:transparent}
+.btn.danger-o{color:var(--danger);border-color:var(--danger-line);background:transparent}
+.btn.sm{padding:6px 12px;font-size:.88rem;border-radius:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin:0 0 12px;box-shadow:var(--shadow)}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.empty{color:var(--mute);font-size:.92rem;margin:6px 0}
+.grid{display:grid;gap:12px}
+@media(min-width:720px){.grid.two{grid-template-columns:1fr 1fr;align-items:start}.grid.two>.full{grid-column:1/-1}}
+
+/* búsqueda y chips */
+.search input{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font-size:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.chips.scroll::-webkit-scrollbar{display:none}
+.tag,.chip,.pill{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:3px 10px;font-size:.84rem;background:var(--acc-soft);color:var(--ink);border:1px solid transparent;white-space:nowrap}
+button.tag{cursor:pointer}
+.tag.on,.pill.on{background:var(--acc);color:var(--acc-ink)}
+.pill{background:var(--card);border-color:var(--line);cursor:pointer}
+.pill.bad{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-line)}
+.pill.good{background:var(--ok-bg);color:var(--ok)}
+.pill.neutral{background:var(--warn-bg);color:var(--warn)}
+.chip button{background:none;border:0;padding:0 0 0 2px;font-size:1rem;line-height:1;color:var(--mute)}
+
+/* lista de personas */
+.pcard{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.pcard:active{transform:scale(.99)}
+.pmain{min-width:0;flex:1}
+.pname{font-weight:700}
+.ptags{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}
+.pmeta{font-size:.84rem;color:var(--mute)}
+.av{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background-size:cover;background-position:center;overflow:hidden}
+.av.lg{width:68px;height:68px;font-size:1.5rem}
+.fab{position:fixed;right:max(18px,calc(50% - 362px));bottom:calc(20px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;border:0;background:var(--acc);color:var(--acc-ink);font-size:1.8rem;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.rem{border-color:var(--acc)}
+.rem .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left}
+.rem .row:first-of-type{border-top:0}
+.rem .when{color:var(--acc);font-weight:700;white-space:nowrap}
+
+/* perfil */
+.head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.head .sub{color:var(--mute);font-size:.88rem}
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin:0 -16px 12px;padding-left:16px;padding-right:16px;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;border:0;background:none;padding:8px 12px;border-radius:99px;font-weight:600;color:var(--mute)}
+.tabs button.on{background:var(--acc);color:var(--acc-ink)}
+.tabs .n{font-size:.72rem;background:var(--line);color:var(--ink);border-radius:99px;padding:1px 6px;margin-left:4px}
+.tabs .n.red{background:var(--danger);color:#fff}
+.alert{background:var(--danger-bg);border:2px solid var(--danger);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;color:var(--ink)}
+.alert h3{margin:0 0 6px;color:var(--danger);font-size:1rem;letter-spacing:.03em}
+.alert .g{margin:6px 0 0;font-size:.92rem}
+.alert .g b{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--danger)}
+.alert ul{margin:2px 0 0;padding-left:18px}
+.alert.compact{margin:0 0 12px}
+.irow{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line);align-items:baseline}
+.irow:first-of-type{border-top:0}
+.ilab{flex:none;width:9.5em;font-size:.86rem;color:var(--mute)}
+@media(max-width:520px){.irow{flex-direction:column;gap:4px}.ilab{width:auto}}
+.item{padding:10px 0;border-top:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.item:first-of-type{border-top:0}
+.item .body{flex:1;min-width:0}
+.item .meta{font-size:.8rem;color:var(--mute)}
+.item .txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.item.used .txt{text-decoration:line-through;color:var(--mute)}
+.chk{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:var(--card);display:grid;place-items:center;font-size:.9rem;color:var(--acc-ink)}
+.chk.on{background:var(--ok);border-color:var(--ok)}
+.sug{background:var(--acc-soft);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.sug .acts{display:flex;gap:6px;margin-top:8px}
+.kind{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--acc)}
+.bar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.bar .sp{flex:1}
+.inline{display:flex;gap:8px;margin-bottom:8px}
+.inline input{flex:1;min-width:0}
+
+/* formularios */
+input[type=text],input[type=date],input[type=number],input[type=search],select,textarea{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px}
+textarea{min-height:90px;resize:vertical}
+label.f{display:block;margin:0 0 12px;font-size:.85rem;color:var(--mute);font-weight:600}
+label.f>input,label.f>select,label.f>textarea{margin-top:4px;font-weight:400;color:var(--ink)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.opts label{cursor:pointer}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:.88rem;color:var(--ink);font-weight:500;background:var(--card)}
+.opts input:checked+span{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.opts.rating input:checked+span.r-funciono{background:var(--ok);color:#fff}
+.opts.rating input:checked+span.r-no{background:var(--danger);color:#fff}
+.opts.rating input:checked+span.r-neutro{background:var(--warn);color:#fff}
+.opts input:focus-visible+span{outline:2px solid var(--acc);outline-offset:2px}
+.ted{display:flex;flex-wrap:wrap;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 8px;margin-top:4px}
+.ted input{flex:1;min-width:8em;border:0;outline:0;background:none;padding:4px}
+.warnbox{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:.88rem;margin-bottom:12px}
+
+/* modal */
+dialog{border:0;padding:0;background:var(--card);color:var(--ink);width:100%;max-width:560px;margin:auto auto 0;border-radius:20px 20px 0 0;max-height:92vh}
+dialog::backdrop{background:rgba(10,10,20,.5)}
+@media(min-width:600px){dialog{margin:auto;border-radius:20px}}
+.sheet header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 4px}
+.sheet header h2{font-size:1.05rem;text-transform:none;letter-spacing:0;color:var(--ink)}
+.sbody{padding:8px 16px;max-height:calc(92vh - 130px);overflow:auto}
+.sheet footer{display:flex;gap:8px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);align-items:center}
+.sheet footer .sp{flex:1}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;font-size:.92rem}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ciclo */
+.phase{display:flex;gap:12px;align-items:center}
+.phase .big{font-size:1.9rem}
+.phase b{font-size:1.1rem}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .wd{text-align:center;font-size:.72rem;color:var(--mute);padding:2px 0}
+.cd{position:relative;aspect-ratio:1;border:1px solid transparent;border-radius:10px;background:none;font-size:.9rem;padding:0;display:grid;place-items:center}
+.cd.blank{visibility:hidden}
+.cd.ph-menstrual{background:color-mix(in srgb,var(--ph-m) 45%,transparent)}
+.cd.ph-folicular{background:color-mix(in srgb,var(--ph-f) 18%,transparent)}
+.cd.ph-ovulacion{background:color-mix(in srgb,var(--ph-o) 38%,transparent)}
+.cd.ph-lutea{background:color-mix(in srgb,var(--ph-l) 18%,transparent)}
+.cd.pms{background:color-mix(in srgb,var(--ph-l) 34%,transparent)}
+.cd.pred{border:1px dashed color-mix(in srgb,var(--mute) 55%,transparent)}
+.cd.today{outline:2px solid var(--acc);outline-offset:-1px;font-weight:800}
+.cd .mk{position:absolute;top:2px;right:4px;font-size:.55rem;color:var(--ph-m)}
+.cd .mk2{position:absolute;bottom:1px;right:4px;font-size:.6rem;color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:.78rem;color:var(--mute);margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.tips{margin:6px 0 0;padding-left:18px;font-size:.92rem}
+.note-sm{font-size:.8rem;color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+<input type="file" id="photoFile" accept="image/*" hidden>
+
+<script>
+'use strict';
+/* =====================================================================
+   Mis personas — CRM personal (un solo archivo, datos en localStorage)
+   ===================================================================== */
+const KEY = 'crm-personal-v1';
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+const pad = n => String(n).padStart(2, '0');
+
+/* ---------- fechas (todo en ISO local YYYY-MM-DD) ---------- */
+const parseD = iso => { const [y, m, d] = iso.slice(0, 10).split('-').map(Number); return new Date(y, m - 1, d); };
+const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const todayISO = () => toISO(new Date());
+const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 864e5);
+const addDays = (iso, n) => { const d = parseD(iso); d.setDate(d.getDate() + n); return toISO(d); };
+const fmtD = (iso, o = { day: 'numeric', month: 'short', year: 'numeric' }) => parseD(iso).toLocaleDateString('es-AR', o);
+const fmtShort = iso => fmtD(iso, { day: 'numeric', month: 'short' });
+const daysLabel = n => n === 0 ? 'hoy' : n === 1 ? 'mañana' : `en ${n} días`;
+const agoLabel = iso => {
+  const n = daysBetween(iso.slice(0, 10), todayISO());
+  return n <= 0 ? 'hoy' : n === 1 ? 'ayer' : n < 30 ? `hace ${n} días` : fmtD(iso.slice(0, 10));
+};
+const fmtTime = iso => new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+const localDay = iso => toISO(new Date(iso)); // ISO datetime (UTC) -> día local
+
+/* ---------- categorías de intereses ---------- */
+const DEFAULT_CATS = [
+  { key: 'musica', label: 'Música', icon: '🎵', hint: 'Banda o artista' },
+  { key: 'comida', label: 'Comida favorita', icon: '🍜', hint: 'Ej: sushi, helado de pistacho' },
+  { key: 'perfume', label: 'Perfume', icon: '🌸', hint: 'Ej: Coco Mademoiselle' },
+  { key: 'hobbies', label: 'Hobbies', icon: '🎨', hint: 'Ej: yoga, fotografía' },
+  { key: 'trabajo', label: 'Trabajo y horario', icon: '💼', hint: 'Ej: diseñadora, turno 9 a 18' },
+  { key: 'estudia', label: 'Estudia', icon: '📚', hint: 'Ej: Psicología, 3er año' },
+  { key: 'otros', label: 'Otros intereses', icon: '✨', hint: 'Cualquier otro tag' },
+];
+const EVITAR = { key: 'evitar', label: 'Evitar', icon: '⚠️' };
+const catOf = key => key === 'evitar' ? EVITAR : S.cats.find(c => c.key === key) || { key, label: key, icon: '🏷️', hint: 'Tag' };
+
+/* ---------- estado y persistencia ---------- */
+const newPerson = name => ({
+  id: uid(), name, photo: '', metHow: '', metDate: todayISO(), addedAt: new Date().toISOString(),
+  interests: {}, notes: [], dates: [], ideas: [], outings: [], avoid: [], dismissed: [],
+  cycle: { on: false, cycleLength: 28, periodLength: 5, starts: [] },
+});
+function migrate(r) {
+  r.cats = Array.isArray(r.cats) && r.cats.length ? r.cats : DEFAULT_CATS.map(c => ({ ...c }));
+  r.people.forEach(p => {
+    const b = newPerson(p.name);
+    Object.keys(b).forEach(k => { if (p[k] === undefined) p[k] = b[k]; });
+    p.cycle = { ...b.cycle, ...p.cycle };
+  });
+  return r;
+}
+function load() {
+  try {
+    const r = JSON.parse(localStorage.getItem(KEY));
+    if (r && Array.isArray(r.people)) return migrate(r);
+  } catch (e) { /* almacenamiento vacío o corrupto */ }
+  return { v: 1, cats: DEFAULT_CATS.map(c => ({ ...c })), people: [] };
+}
+let S = load();
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch (e) { toast('No se pudo guardar (almacenamiento lleno). Exportá un respaldo.'); }
+}
+try { navigator.storage?.persist?.(); } catch (e) { /* opcional */ }
+const byId = id => S.people.find(p => p.id === id);
+const ui = { q: '', tag: '', tab: {}, noteFilter: '', noteLimit: 15, ideaFilter: 'all', cal: null, extra: {} };
+
+/* ---------- derivados de la persona ---------- */
+const allTags = p => S.cats.flatMap(c => (p.interests[c.key] || []).map(t => ({ cat: c.key, text: t })));
+
+function nextOcc(d, from = todayISO()) {
+  if (!d.date) return null;
+  if (d.recurring) {
+    const [y0, m, dd] = d.date.split('-').map(Number), fy = +from.slice(0, 4);
+    let c = toISO(new Date(fy, m - 1, dd));
+    if (c < from) c = toISO(new Date(fy + 1, m - 1, dd));
+    return { iso: c, days: daysBetween(from, c), years: +c.slice(0, 4) - y0 };
+  }
+  const days = daysBetween(from, d.date);
+  return { iso: d.date, days, past: days < 0, years: 0 };
+}
+const DATE_TYPES = { cumple: ['🎂', 'Cumpleaños'], aniversario: ['💞', 'Aniversario'], evento: ['📌', 'Evento'], otro: ['⭐', 'Otra'] };
+function nextDate(p) {
+  return p.dates.map(d => ({ d, o: nextOcc(d) })).filter(x => x.o && !x.o.past).sort((a, b) => a.o.days - b.o.days)[0] || null;
+}
+function reminders() {
+  const out = [];
+  S.people.forEach(p => p.dates.forEach(d => {
+    const o = nextOcc(d);
+    if (o && !o.past && o.days <= (d.remind ?? 7)) out.push({ p, d, o });
+  }));
+  return out.sort((a, b) => a.o.days - b.o.days);
+}
+
+/* ---------- alerta "NO HAGAS ESTO" ---------- */
+function alertItems(p) {
+  const items = [];
+  p.avoid.forEach(a => items.push({ type: 'evitar', text: a.text }));
+  p.outings.filter(o => o.rating === 'no').forEach(o => items.push({ type: 'salida', text: o.what, how: o.how, date: o.date }));
+  p.notes.filter(n => n.tags.includes('evitar')).forEach(n => items.push({ type: 'nota', text: n.text, date: localDay(n.date) }));
+  return items;
+}
+function alertHTML(p, compact) {
+  const items = alertItems(p);
+  if (!items.length) return '';
+  const groups = [
+    ['evitar', 'Cosas a evitar', i => esc(i.text)],
+    ['salida', 'Salidas que no funcionaron', i => `${esc(i.text)} <span class="note-sm">(${fmtShort(i.date)})</span>${i.how ? ' — ' + esc(i.how) : ''}`],
+    ['nota', 'Notas marcadas para evitar', i => `${esc(i.text.length > 110 ? i.text.slice(0, 110) + '…' : i.text)} <span class="note-sm">(${fmtShort(i.date)})</span>`],
+  ];
+  const cap = compact ? 3 : 4;
+  const html = groups.map(([t, label, fn]) => {
+    const list = items.filter(i => i.type === t);
+    if (!list.length) return '';
+    const more = list.length - cap;
+    return `<div class="g"><b>${label}</b><ul>${list.slice(0, cap).map(i => `<li>${fn(i)}</li>`).join('')}</ul>${more > 0 && !compact ? `<button class="link" data-a="tab" data-tab="evitar">+${more} más</button>` : ''}</div>`;
+  }).join('');
+  return `<section class="alert${compact ? ' compact' : ''}" role="alert"><h3>⚠️ NO HAGAS ESTO</h3>${html}</section>`;
+}
+function similarWarn(p, text) {
+  const w = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter(x => x.length >= 4);
+  const words = new Set(w(text));
+  if (!words.size) return [];
+  return alertItems(p).filter(i => w(i.text + ' ' + (i.how || '')).some(x => words.has(x)));
+}
+
+/* ---------- calendario menstrual ---------- */
+const PHASES = {
+  menstrual: { label: 'Menstrual', icon: '🩸', color: 'var(--ph-m)', desc: 'Está en su período. Puede haber cansancio, dolor o menos energía.', tips: ['Plan tranquilo, preferentemente en casa', 'Preguntarle qué necesita en vez de asumir', 'Detalles útiles: infusión, bolsa de calor, algo rico'] },
+  folicular: { label: 'Folicular', icon: '🌱', color: 'var(--ph-f)', desc: 'Suele subir la energía y el ánimo.', tips: ['Buen momento para planes activos o algo nuevo', 'Salidas más largas o sociales'] },
+  ovulacion: { label: 'Ovulatoria', icon: '☀️', color: 'var(--ph-o)', desc: 'Ventana fértil (aprox.). Suele haber pico de energía y sociabilidad.', tips: ['Buen momento para una cita especial', 'Si es relevante: es su ventana fértil'] },
+  lutea: { label: 'Lútea', icon: '🌙', color: 'var(--ph-l)', desc: 'La energía va bajando; en los últimos días puede aparecer el síndrome premenstrual.', tips: ['Planes livianos, sin presión', 'Paciencia y detalles chicos', 'Evitar temas cargados o discusiones largas'] },
+};
+function cycAvg(c) {
+  const s = [...c.starts].sort(), d = [];
+  for (let i = 1; i < s.length; i++) { const n = daysBetween(s[i - 1], s[i]); if (n >= 18 && n <= 60) d.push(n); }
+  const last = d.slice(-6);
+  return { L: last.length ? Math.round(last.reduce((a, b) => a + b, 0) / last.length) : (c.cycleLength || 28), measured: last.length };
+}
+function cycleInfo(p, iso) {
+  const c = p.cycle;
+  if (!c.on) return null;
+  const starts = [...c.starts].sort(), { L } = cycAvg(c), per = c.periodLength || 5;
+  let base = null;
+  for (const s of starts) if (s <= iso) base = s;
+  if (!base) return null;
+  const isLast = base === starts[starts.length - 1];
+  let day = daysBetween(base, iso) + 1, predicted = false;
+  if (day > L) { if (isLast) { predicted = true; day = ((day - 1) % L) + 1; } else day = L; }
+  const ov = Math.max(per + 3, L - 14);
+  const phase = day <= per ? 'menstrual' : day < ov - 1 ? 'folicular' : day <= ov + 1 ? 'ovulacion' : 'lutea';
+  return { day, phase, L, per, ov, predicted, pms: phase === 'lutea' && day > L - 5 };
+}
+function nextPeriod(p) {
+  const c = p.cycle, starts = [...c.starts].sort();
+  if (!starts.length) return null;
+  const { L } = cycAvg(c), t = todayISO();
+  let cand = addDays(starts[starts.length - 1], L), late = 0;
+  while (cand < t) { late = daysBetween(cand, t); cand = addDays(cand, L); }
+  return { iso: cand, days: daysBetween(t, cand), late };
+}
+
+/* ---------- motor de sugerencias ----------
+   Estructura: cada proveedor tiene { id, async?, suggest(person) } y devuelve
+   [{ key, kind: 'regalo'|'plan'|'gesto', text, why, score, tag? }].
+   Hoy hay un proveedor de reglas (matching de tags). Para sumar IA:
+     Suggest.providers.push({ id: 'ia', async: true, suggest: async person => [...] });
+   y llamar Suggest.refreshAsync(person) (los resultados se mezclan solos). */
+const CAT_RULES = {
+  musica: [['plan', 'Buscar entradas para un show de {t}'], ['regalo', 'Merch o vinilo de {t}'], ['gesto', 'Armar una playlist con temas de {t} y escucharla juntos']],
+  comida: [['plan', 'Reservar en un lugar especializado en {t}'], ['plan', 'Cocinar {t} juntos en casa'], ['gesto', 'Llevarle {t} de sorpresa']],
+  perfume: [['regalo', 'Regalarle {t} (o un decant/miniatura de uno parecido para probar)']],
+  hobbies: [['plan', 'Plan ligado a {t}: una clase, taller o salida temática'], ['regalo', 'Un regalo que sume a su hobby: {t}']],
+  trabajo: [['plan', 'Proponer un plan que respete su rutina ({t})'], ['gesto', 'Mandarle un mensaje de ánimo antes de su jornada ({t})']],
+  estudia: [['regalo', 'Algo útil para su cursada ({t}): libreta, snacks o un cargador portátil'], ['plan', 'Acompañarla en una tarde de estudio y salir a cenar después ({t})']],
+  _default: [['plan', 'Plan relacionado con {t}'], ['regalo', 'Regalo relacionado con {t}']],
+};
+const KW_RULES = [
+  ['cafe', /caf[eé]/i, 'plan', 'Ir a una cafetería de especialidad ({t})'],
+  ['cine', /cine|pel[ií]cula|serie|netflix/i, 'plan', 'Ir al cine a ver un estreno o hacer maratón de series ({t})'],
+  ['libro', /libro|lectura|leer|novela/i, 'regalo', 'Regalarle un libro de su género o autor favorito ({t})'],
+  ['viaje', /viaj|playa|monta[nñ]a|trekking|camping/i, 'plan', 'Escapada corta de fin de semana ({t})'],
+  ['fit', /gym|yoga|running|correr|fitness|pilates|nataci/i, 'plan', 'Clase de prueba o salida activa juntos ({t})'],
+  ['foto', /foto|c[aá]mara/i, 'regalo', 'Un rollo/álbum o accesorio de fotografía ({t})'],
+  ['bebida', /vino|cerveza|birra|fernet|\bgin\b/i, 'plan', 'Cata o salida a un bar especializado ({t})'],
+  ['mascota', /gato|perro|mascota|animal/i, 'regalo', 'Un detalle para su mascota o de temática animal ({t})'],
+  ['gamer', /videojuego|gaming|playstation|switch|steam|gamer/i, 'plan', 'Tarde de videojuegos o juego nuevo ({t})'],
+  ['arte', /\barte\b|museo|dibuj|pintur|teatro/i, 'plan', 'Museo, muestra u obra de teatro ({t})'],
+  ['cocina', /cocin|reposter|pastel|torta/i, 'plan', 'Cocinar o hornear algo juntos ({t})'],
+];
+const CYCLE_SUG = {
+  menstrual: [['gesto', 'Escribirle para preguntar cómo está y qué necesita hoy'], ['regalo', 'Detalle reconfortante: chocolate, infusión o bolsa de calor'], ['plan', 'Plan tranquilo en casa: peli y comida rica']],
+  folicular: [['plan', 'Aprovechar la energía: plan activo o algo que no hayan probado']],
+  ovulacion: [['plan', 'Cita especial o salida social']],
+  lutea: [['gesto', 'Tener paciencia y un detalle chico para el día a día'], ['plan', 'Plan liviano y sin presión']],
+};
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+const excerpt = s => { const w = s.trim().split(/\s+/); return w.slice(0, 8).join(' ') + (w.length > 8 ? '…' : ''); };
+
+const RulesProvider = {
+  id: 'reglas',
+  suggest(p) {
+    const out = new Map();
+    const add = (key, kind, text, why, score, tag) => {
+      const cur = out.get(key);
+      if (!cur || cur.score < score) out.set(key, { key, kind, text, why, score, tag: tag || key, src: 'reglas' });
+    };
+    const notes = p.notes.filter(n => !n.tags.includes('evitar'));
+    const mention = t => notes.find(n => norm(n.text).includes(norm(t)));
+
+    S.cats.forEach(c => (p.interests[c.key] || []).forEach(t => {
+      const m = mention(t), base = m ? 3 : 1;
+      const why = m ? `${c.label}: “${t}” — mencionado también en una nota del ${fmtShort(localDay(m.date))}` : `${c.label}: ${t}`;
+      (CAT_RULES[c.key] || CAT_RULES._default).forEach(([kind, tpl], i) =>
+        add(`${c.key}:${i}:${norm(t)}`, kind, tpl.replace('{t}', t), why, base, norm(t)));
+      KW_RULES.forEach(([id, re, kind, tpl]) => re.test(`${c.label} ${t}`) && add(`kw:${id}:${norm(t)}`, kind, tpl.replace('{t}', t), why, base + .5, norm(t)));
+    }));
+
+    // notas con tags de categoría: alimentan las sugerencias aunque el interés no esté cargado
+    const tags = allTags(p).map(t => norm(t.text));
+    notes.filter(n => n.tags.length).slice(0, 5).forEach(n => {
+      const why = `Nota (${catOf(n.tags[0]).label}) del ${fmtShort(localDay(n.date))}`;
+      KW_RULES.forEach(([id, re, kind, tpl]) => re.test(n.text) && add(`kwn:${id}:${n.id}`, kind, tpl.replace('{t}', excerpt(n.text)), why, 2, 'n' + n.id));
+      if (!tags.some(t => norm(n.text).includes(t)))
+        add(`note:${n.id}`, 'plan', `Plan o regalo inspirado en tu nota: “${excerpt(n.text)}”`, why, 2, 'n' + n.id);
+    });
+
+    // fechas cercanas sin regalo/gesto definido
+    p.dates.forEach(d => {
+      const o = nextOcc(d);
+      if (o && !o.past && o.days <= 30 && !d.gift)
+        add(`date:${d.id}`, 'regalo', `Definir un regalo o gesto para “${d.title}” (${daysLabel(o.days)})`, 'Fecha importante sin idea asignada', 5, 'd' + d.id);
+    });
+
+    // momento del ciclo
+    const ci = cycleInfo(p, todayISO());
+    if (ci) (CYCLE_SUG[ci.phase] || []).forEach(([kind, text], i) =>
+      add(`cyc:${ci.phase}:${i}`, kind, text, `Hoy: fase ${PHASES[ci.phase].label.toLowerCase()} (día ${ci.day})`, 1.5, 'cyc' + i));
+
+    // descartar lo que choca con "cosas a evitar" o con salidas que no funcionaron
+    const avoids = p.avoid.map(a => norm(a.text)).filter(a => a.length >= 3);
+    const failed = p.outings.filter(o => o.rating === 'no').map(o => norm(o.what));
+    return [...out.values()].filter(s => {
+      const t = norm(s.text);
+      return !avoids.some(a => t.includes(a) || (s.tag.length > 2 && a.includes(s.tag))) && !failed.some(f => f.length > 3 && s.tag.length > 2 && f.includes(s.tag));
+    });
+  },
+};
+const Suggest = {
+  providers: [RulesProvider],
+  forPerson(p, limit = 99) {
+    const saved = new Set(p.ideas.map(i => norm(i.text)));
+    let list = [...this.providers.filter(x => !x.async).flatMap(x => x.suggest(p)), ...(ui.extra[p.id] || [])]
+      .filter(s => !p.dismissed.includes(s.key) && !saved.has(norm(s.text)))
+      .sort((a, b) => b.score - a.score);
+    // diversidad: máximo 2 por tag en la primera pasada, el resto después
+    const seen = {}, first = [], rest = [];
+    list.forEach(s => ((seen[s.tag] = (seen[s.tag] || 0) + 1) <= 2 ? first : rest).push(s));
+    return [...first, ...rest].slice(0, limit);
+  },
+  async refreshAsync(p) {
+    const res = await Promise.all(this.providers.filter(x => x.async).map(x => x.suggest(p).catch(() => [])));
+    ui.extra[p.id] = res.flat();
+    render();
+  },
+};
+
+/* =====================================================================
+   VISTAS
+   ===================================================================== */
+const hue = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+const avatar = (p, lg) => p.photo
+  ? `<div class="av${lg ? ' lg' : ''}" style="background-image:url('${p.photo}')" role="img" aria-label="${esc(p.name)}"></div>`
+  : `<div class="av${lg ? ' lg' : ''}" style="background:hsl(${hue(p.name)} 45% 45%)" aria-hidden="true">${esc([...p.name.trim()][0]?.toUpperCase() || '?')}</div>`;
+const tagChip = key => { const c = catOf(key); return `<span class="pill${key === 'evitar' ? ' bad' : ''}" style="cursor:default">${c.icon} ${esc(c.label)}</span>`; };
+const RATING = { funciono: ['✅', 'Funcionó', 'good'], no: ['❌', 'No funcionó', 'bad'], neutro: ['➖', 'Neutro', 'neutral'] };
+
+/* ---------- inicio ---------- */
+function topTags() {
+  const m = new Map();
+  S.people.forEach(p => allTags(p).forEach(t => { const k = norm(t.text); const e = m.get(k) || { text: t.text, n: 0 }; e.n++; m.set(k, e); }));
+  return [...m.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 16).map(([k, v]) => ({ k, text: v.text }));
+}
+function filteredPeople() {
+  const q = norm(ui.q);
+  return S.people.filter(p => {
+    const tags = allTags(p).map(t => norm(t.text));
+    if (ui.tag && !tags.includes(ui.tag)) return false;
+    return !q || norm(p.name).includes(q) || tags.some(t => t.includes(q)) || S.cats.some(c => (p.interests[c.key] || []).length && norm(c.label).includes(q));
+  }).sort((a, b) => a.name.localeCompare(b.name, 'es'));
+}
+function personCard(p) {
+  const nd = nextDate(p), ci = cycleInfo(p, todayISO()), al = alertItems(p).length;
+  const bits = [];
+  if (nd) bits.push(`${DATE_TYPES[nd.d.type]?.[0] || '⭐'} ${esc(nd.d.title)} · ${daysLabel(nd.o.days)}`);
+  if (ci) bits.push(`${PHASES[ci.phase].icon} día ${ci.day}`);
+  return `<a class="pcard" href="#/p/${p.id}">${avatar(p)}
+    <div class="pmain"><div class="pname">${esc(p.name)}${al ? ' <span title="Tiene cosas a evitar">⚠️</span>' : ''}</div>
+    <div class="ptags">${allTags(p).slice(0, 3).map(t => `<span class="tag">${esc(t.text)}</span>`).join('')}</div>
+    <div class="pmeta">${bits.join(' · ') || 'Sin fechas próximas'}</div></div></a>`;
+}
+function peopleList() {
+  const l = filteredPeople();
+  if (!S.people.length) return `<div class="card"><p><b>Todavía no cargaste a nadie.</b></p><p class="empty">Tocá ＋ para crear el primer perfil.</p><button class="btn sm" data-a="demo">Cargar un ejemplo para probar</button></div>`;
+  return l.length ? l.map(personCard).join('') : '<p class="empty">Nada coincide con la búsqueda.</p>';
+}
+function tagbar() {
+  const tags = topTags();
+  if (!tags.length) return '';
+  return `<button class="tag ${ui.tag ? '' : 'on'}" data-a="clear-tag">Todos</button>` +
+    tags.map(t => `<button class="tag ${ui.tag === t.k ? 'on' : ''}" data-a="filter-tag" data-t="${esc(t.text)}">${esc(t.text)}</button>`).join('');
+}
+function viewHome() {
+  const rem = reminders();
+  return `<header class="top"><div class="ttl"><h1>Mis personas</h1></div><button class="icon" data-a="menu" aria-label="Respaldo y ajustes">⚙️</button></header>
+  ${rem.length ? `<section class="card rem"><h2>Recordatorios</h2>${rem.slice(0, 5).map(r => `<button class="row" data-a="open" data-id="${r.p.id}" data-tab="fechas"><span>${DATE_TYPES[r.d.type]?.[0] || '⭐'} <b>${esc(r.p.name)}</b> · ${esc(r.d.title)}</span><span class="when">${daysLabel(r.o.days)}</span></button>`).join('')}</section>` : ''}
+  <div class="search"><input id="q" type="search" placeholder="Buscar por nombre, banda, hobby…" value="${esc(ui.q)}" autocomplete="off" aria-label="Buscar personas"></div>
+  <div class="chips scroll" id="tagbar">${tagbar()}</div>
+  <div id="plist">${peopleList()}</div>
+  <button class="fab" data-a="add-person" aria-label="Agregar persona">＋</button>`;
+}
+
+/* ---------- perfil ---------- */
+function viewPerson(p) {
+  const tab = ui.tab[p.id] || 'resumen';
+  const unused = p.ideas.filter(i => !i.used).length, al = alertItems(p).length;
+  const tabs = [['resumen', 'Resumen'], ['notas', 'Notas', p.notes.length], ['fechas', 'Fechas', p.dates.length], ['ideas', 'Ideas', unused], ['salidas', 'Salidas', p.outings.length], ['evitar', 'Evitar', al, 'red'], ['ciclo', 'Ciclo']];
+  const days = daysBetween(p.metDate, todayISO());
+  const body = { resumen: tResumen, notas: tNotas, fechas: tFechas, ideas: tIdeas, salidas: tSalidas, evitar: tEvitar, ciclo: tCiclo }[tab](p);
+  return `<header class="top"><a class="icon" href="#/" aria-label="Volver">←</a><div class="ttl"></div><button class="icon" data-a="edit-person" aria-label="Editar perfil">✏️</button></header>
+  <div class="head">${avatar(p, true)}<div><h1>${esc(p.name)}</h1>
+    <div class="sub">${p.metHow ? esc(p.metHow) + ' · ' : ''}desde ${fmtD(p.metDate)}${days > 0 ? ` (${days < 60 ? days + ' días' : Math.round(days / 30.4) + ' meses'})` : ''}</div></div></div>
+  ${tab === 'resumen' ? alertHTML(p) : tab !== 'evitar' && al ? `<button class="alert compact" style="width:100%;text-align:left;padding:8px 14px" data-a="tab" data-tab="evitar"><b style="color:var(--danger)">⚠️ NO HAGAS ESTO</b> · ${al} cosa${al > 1 ? 's' : ''} a evitar · <span style="color:var(--acc)">ver</span></button>` : ''}
+  <nav class="tabs" role="tablist">${tabs.map(([k, l, n, c]) => `<button role="tab" class="${tab === k ? 'on' : ''}" data-a="tab" data-tab="${k}">${l}${n ? `<span class="n ${c || ''}">${n}</span>` : ''}</button>`).join('')}</nav>
+  <main>${body}</main>`;
+}
+function sugCard(s) {
+  const k = { regalo: '🎁 Regalo', plan: '🗓️ Plan', gesto: '💌 Gesto' }[s.kind] || s.kind;
+  return `<div class="sug"><span class="kind">${k}</span><div>${esc(s.text)}</div><div class="note-sm">${esc(s.why)}</div>
+    <div class="acts"><button class="btn sm primary" data-a="save-sug" data-k="${esc(s.key)}">＋ Guardar</button><button class="btn sm ghost" data-a="dismiss-sug" data-k="${esc(s.key)}">Descartar</button></div></div>`;
+}
+function noteItem(n) {
+  return `<div class="item"><div class="body"><div class="meta">${agoLabel(n.date)} · ${fmtD(localDay(n.date), { day: 'numeric', month: 'short' })}, ${fmtTime(n.date)}</div>
+    <div class="txt">${esc(n.text)}</div>${n.tags.length ? `<div class="chips" style="margin-top:6px">${n.tags.map(tagChip).join('')}</div>` : ''}</div>
+    <button class="icon" data-a="edit-note" data-id="${n.id}" aria-label="Editar nota">✏️</button></div>`;
+}
+function dateItem(p, d) {
+  const o = nextOcc(d), [ic, tl] = DATE_TYPES[d.type] || DATE_TYPES.otro;
+  const when = o.past ? `<span class="pill">pasó ${fmtD(o.iso)}</span>` : `<span class="pill ${o.days <= (d.remind ?? 7) ? 'on' : ''}">${daysLabel(o.days)}</span>`;
+  return `<div class="item"><div class="body"><div><b>${ic} ${esc(d.title)}</b> ${when}</div>
+    <div class="meta">${tl} · ${fmtD(o.iso, { day: 'numeric', month: 'long', year: o.past || !d.recurring ? 'numeric' : undefined })}${o.years > 0 ? ` · ${o.years} años` : ''} · avisar ${d.remind ?? 7} días antes</div>
+    ${d.gift ? `<div class="txt" style="margin-top:4px">🎁 ${esc(d.gift)}</div>` : ''}</div>
+    <button class="icon" data-a="edit-date" data-id="${d.id}" aria-label="Editar fecha">✏️</button></div>`;
+}
+function cycleBadge(p) {
+  const ci = cycleInfo(p, todayISO()), np = nextPeriod(p);
+  if (!p.cycle.on) return '';
+  if (!ci) return `<section class="card"><div class="ch"><h2>Ciclo</h2><button class="link" data-a="tab" data-tab="ciclo">Abrir</button></div><p class="empty">Registrá el primer día del último período para ver en qué momento está.</p></section>`;
+  const ph = PHASES[ci.phase];
+  return `<section class="card"><div class="ch"><h2>Ciclo</h2><button class="link" data-a="tab" data-tab="ciclo">Calendario</button></div>
+    <div class="phase"><span class="big">${ph.icon}</span><div><b>${ph.label}</b> · día ${ci.day} de ~${ci.L}${ci.pms ? ' · posible SPM' : ''}
+    <div class="note-sm">${np ? `Próximo período ${np.days === 0 ? 'hoy' : daysLabel(np.days)} (${fmtShort(np.iso)})` : ''}</div></div></div></section>`;
+}
+function tResumen(p) {
+  const nd = nextDate(p), sug = Suggest.forPerson(p, 4), notes = [...p.notes].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  const cats = S.cats.map(c => {
+    const t = p.interests[c.key] || [];
+    return t.length ? `<div class="irow"><span class="ilab">${c.icon} ${esc(c.label)}</span><span class="chips">${t.map(x => `<button class="tag" data-a="filter-tag" data-t="${esc(x)}" title="Ver a todas las personas con este tag">${esc(x)}</button>`).join('')}</span></div>` : '';
+  }).join('');
+  return `<div class="bar"><button class="btn sm primary" data-a="add-note">＋ Nota</button><button class="btn sm" data-a="add-outing">＋ Nuevo plan</button><button class="btn sm" data-a="add-date">＋ Fecha</button></div>
+  <div class="grid two">
+    ${cycleBadge(p)}
+    <section class="card"><div class="ch"><h2>Próxima fecha</h2><button class="link" data-a="tab" data-tab="fechas">Ver todas</button></div>
+      ${nd ? dateItem(p, nd.d).replace('class="item"', 'class="item" style="border:0;padding:0"') : '<p class="empty">Sin fechas cargadas.</p>'}</section>
+    <section class="card full"><div class="ch"><h2>Intereses</h2><button class="link" data-a="edit-interests">Editar</button></div>${cats || '<p class="empty">Sin intereses cargados. Sumalos para recibir sugerencias.</p>'}</section>
+    <section class="card"><div class="ch"><h2>Últimas notas</h2><button class="link" data-a="tab" data-tab="notas">Ver todas</button></div>
+      ${notes.length ? notes.map(noteItem).join('') : '<p class="empty">Todavía no hay notas.</p>'}</section>
+    <section class="card"><div class="ch"><h2>Ideas sugeridas</h2><button class="link" data-a="tab" data-tab="ideas">Ver más</button></div>
+      ${sug.length ? sug.map(sugCard).join('') : '<p class="empty">Cargá intereses o notas con tags y van a aparecer ideas acá.</p>'}</section>
+  </div>`;
+}
+function tNotas(p) {
+  const all = [...p.notes].sort((a, b) => b.date.localeCompare(a.date));
+  const usedTags = [...new Set(all.flatMap(n => n.tags))];
+  const list = ui.noteFilter ? all.filter(n => n.tags.includes(ui.noteFilter)) : all;
+  return `<div class="bar"><button class="btn primary" data-a="add-note">＋ Nueva nota</button></div>
+  ${usedTags.length ? `<div class="chips scroll"><button class="tag ${ui.noteFilter ? '' : 'on'}" data-a="note-filter" data-t="">Todas</button>${usedTags.map(t => `<button class="tag ${ui.noteFilter === t ? 'on' : ''}" data-a="note-filter" data-t="${t}">${catOf(t).icon} ${esc(catOf(t).label)}</button>`).join('')}</div>` : ''}
+  <section class="card">${list.length ? list.slice(0, ui.noteLimit).map(noteItem).join('') + (list.length > ui.noteLimit ? `<button class="btn sm" data-a="more-notes">Ver más (${list.length - ui.noteLimit})</button>` : '') : '<p class="empty">No hay notas para mostrar.</p>'}</section>`;
+}
+function tFechas(p) {
+  const list = p.dates.map(d => ({ d, o: nextOcc(d) })).sort((a, b) => (a.o.past - b.o.past) || a.o.days - b.o.days);
+  return `<div class="bar"><button class="btn primary" data-a="add-date">＋ Nueva fecha</button></div>
+  <section class="card">${list.length ? list.map(x => dateItem(p, x.d)).join('') : '<p class="empty">Cumpleaños, aniversarios, eventos que mencionó que le importan…</p>'}</section>`;
+}
+function tIdeas(p) {
+  const sug = Suggest.forPerson(p, 12), f = ui.ideaFilter;
+  let ideas = p.ideas.filter(i => f === 'all' || (f === 'pend' && !i.used) || (f === 'used' && i.used)).sort((a, b) => a.used - b.used);
+  const KIND = { regalo: '🎁', plan: '🗓️', gesto: '💌' };
+  return `<div class="bar"><button class="btn primary" data-a="add-idea">＋ Nueva idea</button></div>
+  <section class="card"><div class="ch"><h2>Sugeridas para ${esc(p.name)}</h2>${p.dismissed.length ? '<button class="link" data-a="restore-dismissed">Restaurar descartadas</button>' : ''}</div>
+    ${sug.length ? sug.map(sugCard).join('') : '<p class="empty">Sin sugerencias por ahora. Cargá intereses o escribí notas con tags (música, comida, hobbies…).</p>'}</section>
+  <section class="card"><div class="ch"><h2>Banco de ideas</h2></div>
+    <div class="chips" style="margin-bottom:6px">${[['all', 'Todas'], ['pend', 'Pendientes'], ['used', 'Usadas']].map(([k, l]) => `<button class="tag ${f === k ? 'on' : ''}" data-a="idea-filter" data-f="${k}">${l}</button>`).join('')}</div>
+    ${ideas.length ? ideas.map(i => `<div class="item ${i.used ? 'used' : ''}"><button class="chk ${i.used ? 'on' : ''}" data-a="toggle-idea" data-id="${i.id}" aria-label="${i.used ? 'Marcar como no usada' : 'Marcar como usada'}">${i.used ? '✓' : ''}</button>
+      <div class="body"><div class="txt">${KIND[i.kind] || ''} ${esc(i.text)}</div>${i.used ? '<div class="meta">Ya usada</div>' : ''}</div><button class="icon" data-a="edit-idea" data-id="${i.id}" aria-label="Editar idea">✏️</button></div>`).join('') : '<p class="empty">Nada por acá.</p>'}</section>`;
+}
+function tSalidas(p) {
+  const list = [...p.outings].sort((a, b) => b.date.localeCompare(a.date));
+  const c = r => p.outings.filter(o => o.rating === r).length;
+  return `<div class="bar"><button class="btn primary" data-a="add-outing">＋ Nuevo plan / salida</button><span class="sp"></span>
+    <span class="pill good">✅ ${c('funciono')}</span><span class="pill bad">❌ ${c('no')}</span><span class="pill neutral">➖ ${c('neutro')}</span></div>
+  <section class="card">${list.length ? list.map(o => {
+    const r = RATING[o.rating], fut = o.date > todayISO();
+    return `<div class="item"><div class="body"><div><b>${esc(o.what)}</b> ${r ? `<span class="pill ${r[2]}" style="cursor:default">${r[0]} ${r[1]}</span>` : `<span class="pill" style="cursor:default">${fut ? '🗓️ Plan a futuro' : 'Sin calificar'}</span>`}</div>
+      <div class="meta">${fmtD(o.date)}${!fut ? ' · ' + agoLabel(o.date) : ' · ' + daysLabel(daysBetween(todayISO(), o.date))}</div>${o.how ? `<div class="txt" style="margin-top:4px">${esc(o.how)}</div>` : ''}</div>
+      <button class="icon" data-a="edit-outing" data-id="${o.id}" aria-label="Editar salida">✏️</button></div>`;
+  }).join('') : '<p class="empty">Registrá qué hicieron y cómo salió. Lo que no funcionó se suma a la alerta.</p>'}</section>`;
+}
+function tEvitar(p) {
+  const auto = alertItems(p).filter(i => i.type !== 'evitar');
+  return `<section class="card"><div class="ch"><h2>Cosas a evitar</h2></div>
+    <form class="inline" data-f="avoid-add"><input type="text" name="text" placeholder="Tema sensible, algo que no le gusta, error a no repetir…" required autocomplete="off"><button class="btn primary">Agregar</button></form>
+    ${p.avoid.length ? p.avoid.map(a => `<div class="item"><div class="body txt">${esc(a.text)}</div><button class="icon" data-a="del-avoid" data-id="${a.id}" aria-label="Quitar">✕</button></div>`).join('') : '<p class="empty">Nada cargado todavía.</p>'}</section>
+  ${auto.length ? `<section class="card"><div class="ch"><h2>Detectado automáticamente</h2></div><p class="note-sm">Sale de salidas que “no funcionaron” y notas con el tag Evitar. Se editan desde sus pestañas.</p>
+    ${auto.map(i => `<div class="item"><div class="body"><span class="pill bad" style="cursor:default">${i.type === 'salida' ? '❌ Salida' : '⚠️ Nota'}</span> ${esc(i.text)}<div class="meta">${fmtD(i.date)}${i.how ? ' — ' + esc(i.how) : ''}</div></div></div>`).join('')}</section>` : ''}`;
+}
+
+/* ---------- ciclo ---------- */
+function tCiclo(p) {
+  const c = p.cycle;
+  if (!c.on) return `<section class="card"><h2>Calendario menstrual</h2><p>Activalo solo si te sirve para esta persona. Con la fecha de inicio de cada período, la app estima en qué fase está y cuándo viene el próximo.</p>
+    <button class="btn primary" data-a="cycle-on">Activar para ${esc(p.name)}</button></section>`;
+  const t = todayISO(), ci = cycleInfo(p, t), np = nextPeriod(p), { L, measured } = cycAvg(c), starts = [...c.starts].sort();
+  if (!ui.cal) ui.cal = t.slice(0, 7);
+  const [Y, M] = ui.cal.split('-').map(Number), first = new Date(Y, M - 1, 1), dim = new Date(Y, M, 0).getDate();
+  const dateSet = new Set(p.dates.map(d => nextOccOn(d, Y)).filter(Boolean));
+  let cells = ['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(w => `<div class="wd">${w}</div>`).join('') + '<div class="cd blank"></div>'.repeat((first.getDay() + 6) % 7);
+  for (let d = 1; d <= dim; d++) {
+    const iso = `${Y}-${pad(M)}-${pad(d)}`, i = cycleInfo(p, iso);
+    cells += `<button class="cd${i ? ' ph-' + i.phase : ''}${i?.pms ? ' pms' : ''}${i?.predicted ? ' pred' : ''}${iso === t ? ' today' : ''}" data-a="cal-day" data-d="${iso}" aria-label="${fmtD(iso)}${i ? ', ' + PHASES[i.phase].label : ''}">${d}${starts.includes(iso) ? '<i class="mk">●</i>' : ''}${dateSet.has(iso) ? '<i class="mk2">★</i>' : ''}</button>`;
+  }
+  const ph = ci && PHASES[ci.phase];
+  return `${ci ? `<section class="card"><div class="phase"><span class="big">${ph.icon}</span><div><b>Fase ${ph.label.toLowerCase()}</b> · día ${ci.day} del ciclo${ci.pms ? ' · posible SPM' : ''}
+      <div class="note-sm">${np ? `Próximo período ${np.days === 0 ? 'hoy' : daysLabel(np.days)} (${fmtD(np.iso, { weekday: 'short', day: 'numeric', month: 'short' })})` : ''}</div></div></div>
+      <p style="margin-top:10px">${ph.desc}</p><ul class="tips">${ph.tips.map(x => `<li>${x}</li>`).join('')}</ul>
+      ${ci.predicted && np?.late > 0 ? `<div class="warnbox" style="margin:10px 0 0">Se esperaba el inicio hace ${np.late} día${np.late > 1 ? 's' : ''}. Si ya empezó, registralo para ajustar el calendario.</div>` : ''}</section>`
+      : `<section class="card"><p><b>Falta un dato para empezar.</b></p><p class="empty">Registrá el primer día del último período.</p></section>`}
+  <div class="bar"><button class="btn primary" data-a="cycle-today">Hoy empezó su período</button><button class="btn" data-a="cycle-add">Otra fecha…</button></div>
+  <section class="card"><div class="cal-h"><button class="icon" data-a="cal-prev" aria-label="Mes anterior">‹</button><b>${first.toLocaleDateString('es-AR', { month: 'long' }).replace(/^./, c => c.toUpperCase())} ${Y}</b><button class="icon" data-a="cal-next" aria-label="Mes siguiente">›</button></div>
+    <div class="cal">${cells}</div>
+    <div class="legend"><span><i style="background:color-mix(in srgb,var(--ph-m) 45%,transparent)"></i>Período</span><span><i style="background:color-mix(in srgb,var(--ph-f) 18%,transparent)"></i>Folicular</span><span><i style="background:color-mix(in srgb,var(--ph-o) 38%,transparent)"></i>Ovulatoria</span><span><i style="background:color-mix(in srgb,var(--ph-l) 24%,transparent)"></i>Lútea</span><span>● inicio registrado</span><span>★ fecha importante</span><span>┄ estimado</span></div>
+    <p class="note-sm">Tocá un día para marcar o quitar un inicio. Son estimaciones según el promedio (${measured ? `${measured} ciclo${measured > 1 ? 's' : ''} registrado${measured > 1 ? 's' : ''}` : 'configurado'}: ${L} días); no reemplaza consejo médico ni sirve como método anticonceptivo.</p></section>
+  <section class="card"><div class="ch"><h2>Historial de inicios</h2><button class="link" data-a="cycle-cfg">Ajustes</button></div>
+    ${starts.length ? [...starts].reverse().map((s, i, arr) => { const prev = arr[i + 1]; return `<div class="item"><div class="body">${fmtD(s, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}${prev ? `<span class="meta"> · ciclo de ${daysBetween(prev, s)} días</span>` : ''}</div><button class="icon" data-a="cycle-del" data-d="${s}" aria-label="Quitar">✕</button></div>`; }).join('') : '<p class="empty">Sin registros.</p>'}</section>`;
+}
+const nextOccOn = (d, year) => { // ocurrencia de la fecha en un año dado (para marcar en el calendario)
+  if (!d.date) return null;
+  const [y, m, dd] = d.date.split('-').map(Number);
+  return d.recurring ? `${year}-${pad(m)}-${pad(dd)}` : d.date;
+};
+
+/* =====================================================================
+   MODALES
+   ===================================================================== */
+const dlg = $('#dlg');
+let modalDanger = null;
+function modal({ title, body, submit = 'Guardar', onSubmit, danger, onOpen }) {
+  dlg.innerHTML = `<form class="sheet" id="mf"><header><h2>${title}</h2><button type="button" class="icon" data-a="close-modal" aria-label="Cerrar">✕</button></header>
+    <div class="sbody">${body}</div><footer>${danger ? `<button type="button" class="btn danger-o" data-a="modal-danger">${danger.label}</button>` : ''}<span class="sp"></span>
+    <button type="button" class="btn ghost" data-a="close-modal">${onSubmit ? 'Cancelar' : 'Cerrar'}</button>${onSubmit ? `<button class="btn primary" type="submit">${submit}</button>` : ''}</footer></form>`;
+  const f = $('#mf');
+  f.onsubmit = e => {
+    e.preventDefault();
+    f.querySelectorAll('.tin').forEach(commitTag);
+    if (onSubmit && onSubmit(new FormData(f), f) !== false) { closeModal(); render(); }
+  };
+  modalDanger = danger?.fn || null;
+  if (!dlg.open) dlg.showModal();
+  onOpen?.(f);
+  const first = f.querySelector('input[type=text],textarea'); if (first && !first.value && matchMedia('(hover:hover)').matches) first.focus();
+}
+const closeModal = () => { if (dlg.open) dlg.close(); };
+dlg.addEventListener('click', e => { if (e.target === dlg) closeModal(); });
+
+/* editor de tags (chips + input) */
+const chipX = t => `<span class="chip" data-tag="${esc(t)}">${esc(t)}<button type="button" data-a="rm-chip" aria-label="Quitar ${esc(t)}">×</button></span>`;
+const tagEd = (name, tags, hint) => `<div class="ted" data-name="${esc(name)}">${tags.map(chipX).join('')}<input class="tin" placeholder="${esc(hint)}" enterkeyhint="done" autocomplete="off"></div>`;
+function commitTag(input) {
+  const v = input.value.replace(/,/g, '').trim();
+  input.value = '';
+  if (!v) return;
+  const ed = input.closest('.ted');
+  if ([...ed.querySelectorAll('.chip')].some(c => norm(c.dataset.tag) === norm(v))) return;
+  input.insertAdjacentHTML('beforebegin', chipX(v));
+}
+const readTags = ed => [...ed.querySelectorAll('.chip')].map(c => c.dataset.tag);
+
+/* persona */
+let pendingPhoto = '';
+function personModal(p) {
+  const isNew = !p;
+  pendingPhoto = p?.photo || '';
+  modal({
+    title: isNew ? 'Nueva persona' : 'Editar perfil',
+    body: `<div class="head" style="margin-bottom:12px"><div id="phprev">${photoPrev(p?.name || '?', pendingPhoto)}</div>
+      <div><button type="button" class="btn sm" data-a="pick-photo">Elegir foto</button> <button type="button" class="btn sm ghost" data-a="rm-photo">Quitar</button></div></div>
+      <label class="f">Nombre / apodo<input type="text" name="name" required value="${esc(p?.name)}"></label>
+      <label class="f">Cómo se conocieron<input type="text" name="metHow" value="${esc(p?.metHow)}" placeholder="Ej: en el cumple de Caro"></label>
+      <label class="f">Fecha en que la agregaste<input type="date" name="metDate" value="${p?.metDate || todayISO()}" required></label>`,
+    danger: isNew ? null : { label: 'Eliminar', fn: () => { if (confirm(`¿Eliminar a ${p.name} y todos sus datos? No se puede deshacer.`)) { S.people = S.people.filter(x => x !== p); save(); closeModal(); location.hash = '#/'; } } },
+    onSubmit: fd => {
+      const name = fd.get('name').trim();
+      if (!name) return false;
+      const t = p || newPerson(name);
+      Object.assign(t, { name, metHow: fd.get('metHow').trim(), metDate: fd.get('metDate'), photo: pendingPhoto });
+      if (isNew) { S.people.push(t); location.hash = `#/p/${t.id}`; }
+      save();
+    },
+  });
+}
+const photoPrev = (name, photo) => photo
+  ? `<div class="av lg" style="background-image:url('${photo}')"></div>`
+  : `<div class="av lg" style="background:hsl(${hue(name)} 45% 45%)">${esc([...name.trim()][0]?.toUpperCase() || '?')}</div>`;
+function resizePhoto(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = 240, c = document.createElement('canvas'); c.width = c.height = s;
+      const m = Math.min(img.width, img.height), ctx = c.getContext('2d');
+      ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', .78));
+    };
+    img.onerror = rej; img.src = url;
+  });
+}
+
+/* intereses */
+function catSection(c, tags) {
+  const custom = !DEFAULT_CATS.some(d => d.key === c.key);
+  return `<div class="f" data-cat="${c.key}"><div style="display:flex;justify-content:space-between;color:var(--mute);font-size:.85rem;font-weight:600">${c.icon} ${esc(c.label)}${custom ? `<button type="button" class="link" style="color:var(--danger)" data-a="del-cat" data-k="${c.key}">Quitar categoría</button>` : ''}</div>${tagEd(c.key, tags, c.hint)}</div>`;
+}
+function interestsModal(p) {
+  modal({
+    title: `Intereses de ${esc(p.name)}`,
+    body: `<p class="note-sm">Escribí y apretá Enter para agregar cada tag.</p><div id="cats">${S.cats.map(c => catSection(c, p.interests[c.key] || [])).join('')}</div>
+      <div class="inline" style="margin-top:8px"><input type="text" id="newcat" placeholder="Nueva categoría (ej: series, deportes)"><button type="button" class="btn sm" data-a="add-cat">Agregar</button></div>`,
+    onSubmit: (fd, f) => {
+      f.querySelectorAll('[data-cat]').forEach(sec => {
+        const tags = readTags(sec.querySelector('.ted'));
+        if (tags.length) p.interests[sec.dataset.cat] = tags; else delete p.interests[sec.dataset.cat];
+      });
+      save();
+    },
+  });
+}
+
+/* notas */
+function noteModal(p, n) {
+  const keys = [...S.cats.map(c => c.key), 'evitar'];
+  modal({
+    title: n ? 'Editar nota' : 'Nueva nota',
+    body: `<label class="f">Nota<textarea name="text" required placeholder="Lo que dijo, algo que notaste, un dato nuevo…">${esc(n?.text)}</textarea></label>
+      <div class="f">Tags (alimentan las sugerencias)<div class="opts">${keys.map(k => `<label><input type="checkbox" name="tag" value="${k}" ${n?.tags.includes(k) ? 'checked' : ''}><span>${catOf(k).icon} ${esc(catOf(k).label)}</span></label>`).join('')}</div></div>
+      <p class="note-sm">La fecha se guarda sola. “Evitar” suma la nota a la alerta de NO HAGAS ESTO.</p>`,
+    danger: n ? { label: 'Eliminar', fn: () => { if (confirm('¿Eliminar esta nota?')) { p.notes = p.notes.filter(x => x !== n); save(); closeModal(); render(); } } } : null,
+    onSubmit: fd => {
+      const text = fd.get('text').trim();
+      if (!text) return false;
+      const tags = fd.getAll('tag');
+      if (n) Object.assign(n, { text, tags }); else p.notes.push({ id: uid(), date: new Date().toISOString(), text, tags });
+      save();
+    },
+  });
+}
+
+/* fechas */
+function dateModal(p, d) {
+  modal({
+    title: d ? 'Editar fecha' : 'Nueva fecha importante',
+    body: `<label class="f">Qué es<input type="text" name="title" required value="${esc(d?.title)}" placeholder="Ej: Cumpleaños, primer mes, final de Psico"></label>
+      <div class="row2"><label class="f">Tipo<select name="type" id="dtype">${Object.entries(DATE_TYPES).map(([k, [i, l]]) => `<option value="${k}" ${d?.type === k ? 'selected' : ''}>${i} ${l}</option>`).join('')}</select></label>
+      <label class="f">Fecha<input type="date" name="date" required value="${d?.date || ''}"></label></div>
+      <div class="row2"><label class="f">Avisar (días antes)<input type="number" name="remind" min="0" max="120" value="${d?.remind ?? 7}"></label>
+      <label class="f" style="display:flex;align-items:end;gap:8px;padding-bottom:10px"><input type="checkbox" name="recurring" id="drec" style="width:auto" ${!d || d.recurring ? 'checked' : ''}> Se repite cada año</label></div>
+      <label class="f">Idea de regalo o gesto<textarea name="gift" placeholder="Opcional">${esc(d?.gift)}</textarea></label>`,
+    danger: d ? { label: 'Eliminar', fn: () => { if (confirm('¿Eliminar esta fecha?')) { p.dates = p.dates.filter(x => x !== d); save(); closeModal(); render(); } } } : null,
+    onOpen: f => { if (!d) f.querySelector('#dtype').onchange = e => { f.querySelector('#drec').checked = ['cumple', 'aniversario'].includes(e.target.value); }; },
+    onSubmit: fd => {
+      const v = { title: fd.get('title').trim(), type: fd.get('type'), date: fd.get('date'), remind: Math.max(0, +fd.get('remind') || 0), recurring: fd.has('recurring'), gift: fd.get('gift').trim() };
+      if (!v.title || !v.date) return false;
+      if (d) Object.assign(d, v); else p.dates.push({ id: uid(), ...v });
+      save();
+    },
+  });
+}
+
+/* ideas */
+function ideaModal(p, i) {
+  modal({
+    title: i ? 'Editar idea' : 'Nueva idea',
+    body: `<div class="f">Tipo<div class="opts">${[['regalo', '🎁 Regalo'], ['plan', '🗓️ Plan'], ['gesto', '💌 Gesto']].map(([k, l]) => `<label><input type="radio" name="kind" value="${k}" ${(i?.kind || 'regalo') === k ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div></div>
+      <label class="f">Idea<textarea name="text" required>${esc(i?.text)}</textarea></label>
+      <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="used" style="width:auto" ${i?.used ? 'checked' : ''}> Ya usada</label>`,
+    danger: i ? { label: 'Eliminar', fn: () => { p.ideas = p.ideas.filter(x => x !== i); save(); closeModal(); render(); } } : null,
+    onSubmit: fd => {
+      const v = { kind: fd.get('kind'), text: fd.get('text').trim(), used: fd.has('used') };
+      if (!v.text) return false;
+      if (i) Object.assign(i, v); else p.ideas.push({ id: uid(), ...v });
+      save();
+    },
+  });
+}
+
+/* salidas / planes */
+function outingModal(p, o) {
+  const warnBox = t => { const w = similarWarn(p, t); return w.length ? `<div class="warnbox">⚠️ Se parece a algo que ya figura en la alerta: <b>${esc(w[0].text)}</b>${w[0].how ? ' — ' + esc(w[0].how) : ''}</div>` : ''; };
+  modal({
+    title: o ? 'Editar salida' : 'Nuevo plan / salida',
+    body: `${alertHTML(p, true)}<div id="sim">${o ? warnBox(o.what) : ''}</div>
+      <div class="row2"><label class="f">Fecha<input type="date" name="date" required value="${o?.date || todayISO()}"></label></div>
+      <label class="f">Qué hicieron / qué van a hacer<input type="text" name="what" id="owhat" required value="${esc(o?.what)}" placeholder="Ej: Cena en el nuevo japonés"></label>
+      <label class="f">Cómo salió<textarea name="how" placeholder="Opcional — breve">${esc(o?.how)}</textarea></label>
+      <div class="f">Rating<div class="opts rating">${[['', 'Sin calificar'], ['funciono', '✅ Funcionó'], ['neutro', '➖ Neutro'], ['no', '❌ No funcionó']].map(([k, l]) => `<label><input type="radio" name="rating" value="${k}" ${(o?.rating || '') === k ? 'checked' : ''}><span class="r-${k}">${l}</span></label>`).join('')}</div></div>`,
+    danger: o ? { label: 'Eliminar', fn: () => { if (confirm('¿Eliminar esta salida?')) { p.outings = p.outings.filter(x => x !== o); save(); closeModal(); render(); } } } : null,
+    onOpen: f => { f.querySelector('#owhat').oninput = e => { f.querySelector('#sim').innerHTML = warnBox(e.target.value); }; },
+    onSubmit: fd => {
+      const v = { date: fd.get('date'), what: fd.get('what').trim(), how: fd.get('how').trim(), rating: fd.get('rating') || null };
+      if (!v.what) return false;
+      if (o) Object.assign(o, v); else p.outings.push({ id: uid(), ...v });
+      save();
+    },
+  });
+}
+
+/* ciclo */
+function cycleCfgModal(p) {
+  const c = p.cycle;
+  modal({
+    title: 'Ajustes del ciclo',
+    body: `<div class="row2"><label class="f">Duración del ciclo (días)<input type="number" name="cl" min="20" max="45" value="${c.cycleLength}"></label>
+      <label class="f">Duración del período (días)<input type="number" name="pl" min="2" max="10" value="${c.periodLength}"></label></div>
+      <p class="note-sm">Con 2 o más inicios registrados, la duración del ciclo se calcula sola con el promedio real. El valor de arriba se usa mientras no haya datos suficientes.</p>`,
+    danger: { label: 'Desactivar', fn: () => { if (confirm('¿Desactivar el calendario? Se conservan los registros.')) { c.on = false; save(); closeModal(); render(); } } },
+    onSubmit: fd => { c.cycleLength = Math.min(45, Math.max(20, +fd.get('cl') || 28)); c.periodLength = Math.min(10, Math.max(2, +fd.get('pl') || 5)); save(); },
+  });
+}
+function calDayModal(p, iso) {
+  const has = p.cycle.starts.includes(iso), i = cycleInfo(p, iso);
+  modal({
+    title: fmtD(iso, { weekday: 'long', day: 'numeric', month: 'long' }),
+    body: `${i ? `<p><b>${PHASES[i.phase].icon} Fase ${PHASES[i.phase].label.toLowerCase()}</b> · día ${i.day} del ciclo${i.predicted ? ' <span class="note-sm">(estimado)</span>' : ''}</p>` : '<p class="empty">Sin información de fase para este día.</p>'}
+      ${has ? '<button type="button" class="btn danger-o" data-a="cal-unset" data-d="' + iso + '">Quitar inicio de período</button>' : '<button type="button" class="btn primary" data-a="cal-set" data-d="' + iso + '">Marcar como inicio del período</button>'}`,
+  });
+}
+function addStart(p, iso) {
+  if (!p.cycle.starts.includes(iso)) p.cycle.starts.push(iso);
+  p.cycle.starts.sort();
+  save(); closeModal(); render();
+}
+
+/* respaldo / ajustes */
+function menuModal() {
+  const kb = Math.round((localStorage.getItem(KEY) || '').length / 1024);
+  modal({
+    title: 'Respaldo y ajustes',
+    body: `<p>Tus datos se guardan <b>solo en este navegador</b> (${S.people.length} persona${S.people.length === 1 ? '' : 's'}, ~${kb} KB). No hay servidor ni cuenta.</p>
+      <p class="note-sm">Para pasar los datos entre el celular y la compu, o para no perderlos si borrás los datos del navegador, exportá un respaldo e importalo en el otro dispositivo.</p>
+      <div class="bar"><button type="button" class="btn primary" data-a="export">⬇️ Exportar respaldo</button><button type="button" class="btn" data-a="import">⬆️ Importar respaldo</button></div>
+      <div class="bar"><button type="button" class="btn sm ghost" data-a="demo">Cargar ejemplo</button><button type="button" class="btn sm danger-o" data-a="wipe">Borrar todo</button></div>`,
+  });
+}
+
+/* ejemplo */
+function demoData() {
+  const t = todayISO(), ago = n => new Date(Date.now() - n * 864e5).toISOString();
+  const p = newPerson('Sofi');
+  p.metHow = 'En el cumple de Caro'; p.metDate = addDays(t, -140);
+  p.interests = {
+    musica: ['Arctic Monkeys', 'Cazzu'], comida: ['Sushi', 'Helado de pistacho'], perfume: ['Coco Mademoiselle'],
+    hobbies: ['Yoga', 'Fotografía analógica'], trabajo: ['Diseñadora UX', 'Trabaja de 9 a 18'],
+    estudia: ['Psicología (3er año)'], otros: ['Café de especialidad', 'Gatos'],
+  };
+  p.notes = [
+    { id: uid(), date: ago(2), text: 'Me contó que quiere ir a ver a Arctic Monkeys si vuelven a Argentina.', tags: ['musica'] },
+    { id: uid(), date: ago(9), text: 'Le encanta el ramen picante, quiere probar el lugar nuevo de Palermo.', tags: ['comida'] },
+    { id: uid(), date: ago(20), text: 'No le gusta que le hablen de su ex ni de su viejo trabajo.', tags: ['evitar'] },
+    { id: uid(), date: ago(35), text: 'Sale del laburo a las 18 pero los jueves se queda hasta tarde.', tags: ['trabajo'] },
+  ];
+  const bd = parseD(addDays(t, 12)); bd.setFullYear(bd.getFullYear() - 26);
+  p.dates = [
+    { id: uid(), title: 'Cumpleaños', type: 'cumple', date: toISO(bd), recurring: true, remind: 14, gift: 'Entradas o algo de fotografía analógica' },
+    { id: uid(), title: 'Aniversario primera salida', type: 'aniversario', date: addDays(t, -120), recurring: true, remind: 5, gift: '' },
+    { id: uid(), title: 'Final de Psicología', type: 'evento', date: addDays(t, 20), recurring: false, remind: 3, gift: 'Escribirle antes del examen' },
+  ];
+  p.outings = [
+    { id: uid(), date: addDays(t, -100), what: 'Cena en el japonés de Palermo', how: 'Muy buena onda, charlaron horas', rating: 'funciono' },
+    { id: uid(), date: addDays(t, -60), what: 'Cine: película de terror', how: 'Se aburrió y quedó incómoda', rating: 'no' },
+    { id: uid(), date: addDays(t, -25), what: 'Café y paseo por el parque', how: '', rating: 'neutro' },
+  ];
+  p.avoid = [{ id: uid(), text: 'Llegar tarde' }];
+  p.ideas = [{ id: uid(), kind: 'plan', text: 'Picnic con fotos analógicas', used: false }];
+  p.cycle = { on: true, cycleLength: 28, periodLength: 5, starts: [addDays(t, -75), addDays(t, -47), addDays(t, -19)] };
+  S.people.push(p); save();
+}
+
+/* =====================================================================
+   ACCIONES
+   ===================================================================== */
+const cur = () => byId(location.hash.split('/')[2]);
+const H = {
+  'menu': () => menuModal(),
+  'close-modal': closeModal,
+  'modal-danger': () => modalDanger?.(),
+  'add-person': () => personModal(),
+  'edit-person': () => personModal(cur()),
+  'pick-photo': () => $('#photoFile').click(),
+  'rm-photo': () => { pendingPhoto = ''; $('#phprev').innerHTML = photoPrev($('#mf [name=name]').value || '?', ''); },
+  'open': el => { ui.tab[el.dataset.id] = el.dataset.tab || 'resumen'; location.hash = `#/p/${el.dataset.id}`; },
+  'tab': el => { const p = cur(); ui.tab[p.id] = el.dataset.tab; ui.noteFilter = ''; render(); window.scrollTo({ top: 0 }); },
+  'filter-tag': el => { ui.tag = norm(el.dataset.t); ui.q = ''; if (location.hash !== '#/') location.hash = '#/'; else render(); },
+  'clear-tag': () => { ui.tag = ''; render(); },
+  'edit-interests': () => interestsModal(cur()),
+  'rm-chip': el => el.closest('.chip').remove(),
+  'add-cat': () => {
+    const inp = $('#newcat'), name = inp.value.trim();
+    if (!name) return;
+    let key = 'c_' + norm(name).replace(/[^a-z0-9]+/g, '_');
+    if (S.cats.some(c => c.key === key)) { toast('Esa categoría ya existe'); return; }
+    const c = { key, label: name, icon: '🏷️', hint: 'Escribí y Enter' };
+    S.cats.push(c); save(); inp.value = '';
+    $('#cats').insertAdjacentHTML('beforeend', catSection(c, []));
+  },
+  'del-cat': el => {
+    const k = el.dataset.k;
+    if (!confirm('¿Quitar esta categoría y sus tags de todas las personas?')) return;
+    S.cats = S.cats.filter(c => c.key !== k); S.people.forEach(p => { delete p.interests[k]; p.notes.forEach(n => { n.tags = n.tags.filter(x => x !== k); }); });
+    save(); el.closest('[data-cat]').remove();
+  },
+  'add-note': () => noteModal(cur()),
+  'edit-note': el => noteModal(cur(), cur().notes.find(n => n.id === el.dataset.id)),
+  'note-filter': el => { ui.noteFilter = el.dataset.t; render(); },
+  'more-notes': () => { ui.noteLimit += 15; render(); },
+  'add-date': () => dateModal(cur()),
+  'edit-date': el => dateModal(cur(), cur().dates.find(d => d.id === el.dataset.id)),
+  'add-idea': () => ideaModal(cur()),
+  'edit-idea': el => ideaModal(cur(), cur().ideas.find(i => i.id === el.dataset.id)),
+  'toggle-idea': el => { const i = cur().ideas.find(x => x.id === el.dataset.id); i.used = !i.used; save(); render(); },
+  'idea-filter': el => { ui.ideaFilter = el.dataset.f; render(); },
+  'save-sug': el => {
+    const p = cur(), s = Suggest.forPerson(p).find(x => x.key === el.dataset.k);
+    if (!s) return;
+    p.ideas.push({ id: uid(), kind: s.kind, text: s.text, used: false, from: 'sugerida' });
+    save(); render(); toast('Guardada en el banco de ideas');
+  },
+  'dismiss-sug': el => { cur().dismissed.push(el.dataset.k); save(); render(); },
+  'restore-dismissed': () => { cur().dismissed = []; save(); render(); },
+  'add-outing': () => outingModal(cur()),
+  'edit-outing': el => outingModal(cur(), cur().outings.find(o => o.id === el.dataset.id)),
+  'del-avoid': el => { const p = cur(); p.avoid = p.avoid.filter(a => a.id !== el.dataset.id); save(); render(); },
+  'cycle-on': () => { const p = cur(); p.cycle.on = true; save(); render(); cycleCfgModal(p); },
+  'cycle-cfg': () => cycleCfgModal(cur()),
+  'cycle-today': () => addStart(cur(), todayISO()),
+  'cycle-add': () => modal({ title: 'Registrar inicio del período', body: '<label class="f">Primer día<input type="date" name="d" required></label>', onSubmit: fd => { const p = cur(), d = fd.get('d'); if (!d) return false; if (!p.cycle.starts.includes(d)) p.cycle.starts.push(d); p.cycle.starts.sort(); save(); }, onOpen: f => { f.querySelector('[name=d]').value = todayISO(); } }),
+  'cycle-del': el => { const p = cur(); p.cycle.starts = p.cycle.starts.filter(s => s !== el.dataset.d); save(); render(); },
+  'cal-prev': () => { const [y, m] = ui.cal.split('-').map(Number); ui.cal = toISO(new Date(y, m - 2, 1)).slice(0, 7); render(); },
+  'cal-next': () => { const [y, m] = ui.cal.split('-').map(Number); ui.cal = toISO(new Date(y, m, 1)).slice(0, 7); render(); },
+  'cal-day': el => calDayModal(cur(), el.dataset.d),
+  'cal-set': el => addStart(cur(), el.dataset.d),
+  'cal-unset': el => { const p = cur(); p.cycle.starts = p.cycle.starts.filter(s => s !== el.dataset.d); save(); closeModal(); render(); },
+  'export': () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' }));
+    a.download = `mis-personas-${todayISO()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  },
+  'import': () => $('#importFile').click(),
+  'wipe': () => { if (confirm('¿Borrar TODOS los datos de este navegador? Exportá un respaldo antes.')) { S = { v: 1, cats: DEFAULT_CATS.map(c => ({ ...c })), people: [] }; save(); closeModal(); location.hash = '#/'; render(); } },
+  'demo': () => { demoData(); closeModal(); location.hash = '#/'; render(); },
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (el && H[el.dataset.a]) { if (el.tagName === 'A') e.preventDefault(); H[el.dataset.a](el, e); }
+});
+document.addEventListener('submit', e => {
+  const f = e.target.closest('[data-f]');
+  if (!f) return;
+  e.preventDefault();
+  if (f.dataset.f === 'avoid-add') {
+    const text = new FormData(f).get('text').trim();
+    if (text) { cur().avoid.push({ id: uid(), text }); save(); render(); }
+  }
+});
+// tags: Enter / coma confirman, salir del campo también
+document.addEventListener('keydown', e => {
+  if (e.target.classList?.contains('tin') && (e.key === 'Enter' || e.key === ',')) { e.preventDefault(); commitTag(e.target); }
+  if (e.target.classList?.contains('tin') && e.key === 'Backspace' && !e.target.value) e.target.previousElementSibling?.remove();
+});
+document.addEventListener('focusout', e => { if (e.target.classList?.contains('tin')) commitTag(e.target); });
+document.addEventListener('input', e => {
+  if (e.target.id !== 'q') return;
+  ui.q = e.target.value; ui.tag = ui.tag && ui.q ? '' : ui.tag;
+  $('#plist').innerHTML = peopleList(); $('#tagbar').innerHTML = tagbar();
+});
+$('#photoFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try { pendingPhoto = await resizePhoto(f); $('#phprev').innerHTML = photoPrev('?', pendingPhoto); } catch (err) { toast('No se pudo leer la imagen'); }
+});
+$('#importFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const r = JSON.parse(await f.text());
+    if (!Array.isArray(r.people)) throw new Error('formato');
+    if (!confirm(`Se van a reemplazar los datos actuales por el respaldo (${r.people.length} personas). ¿Seguir?`)) return;
+    S = migrate(r); save(); closeModal(); location.hash = '#/'; render(); toast('Respaldo importado');
+  } catch (err) { toast('El archivo no es un respaldo válido'); }
+});
+
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+/* ---------- router ---------- */
+let lastRoute = null;
+function render() {
+  const [, kind, id] = location.hash.slice(1).split('/');
+  const route = kind === 'p' ? 'p/' + id : 'home';
+  const p = kind === 'p' && byId(id);
+  if (kind === 'p' && !p) { location.hash = '#/'; return; }
+  $('#app').innerHTML = p ? viewPerson(p) : viewHome();
+  document.title = p ? `${p.name} · Mis personas` : 'Mis personas';
+  if (route !== lastRoute) { window.scrollTo(0, 0); lastRoute = route; ui.noteFilter = ''; ui.noteLimit = 15; ui.cal = null; if (p && Suggest.providers.some(x => x.async)) Suggest.refreshAsync(p); }
+}
+addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
